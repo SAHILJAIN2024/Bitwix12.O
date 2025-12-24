@@ -10,21 +10,22 @@ export default function Navbar({ scrollTo }) {
   ];
 
   return (
-    /* IMPORTANT: Added pointer-events-none to the nav container 
-       and pointer-events-auto to the children. This ensures the 
-       invisible parts of the navbar don't block you from clicking 
-       the Hero section or Video.
-    */
-    <nav className="fixed top-0 w-full z-[100] pointer-events-none">
-      <div className="max-w-7xl mx-auto px-6 py-2 flex justify-between items-center pointer-events-auto">
-        <span 
-          onClick={() => scrollTo('hero')}
-          className="cursor-pointer text-xl font-bold tracking-widest text-indigo-400 font-orbitron"
-        >
-          BITWIX12.O
-        </span>
+    <nav className="fixed top-0 left-0 w-full z-[100] pointer-events-none">
+      {/* 1. We remove the max-width and use w-full to utilize every pixel */}
+      <div className="w-full px-10 py-4 flex items-center relative pointer-events-auto">
+        
+        {/* 2. LOGO: Pushed to far left using margin-right: auto */}
+        <div className="mr-auto">
+          <span 
+            onClick={() => scrollTo('hero')}
+            className="cursor-pointer text-2xl font-bold tracking-[0.25em] text-indigo-400 font-orbitron hover:text-indigo-300 transition-all drop-shadow-[0_0_10px_rgba(129,140,248,0.5)]"
+          >
+            BITWIX12.O
+          </span>
+        </div>
 
-        <div className="min-h-[100px] flex items-center bg-transparent overflow-visible">
+        {/* 3. BUTTONS: Pushed to far right using flex-end alignment */}
+        <div className="flex justify-end items-center bg-transparent overflow-visible min-h-[80px]">
           <GooeyNav 
             items={navItems} 
             particleCount={15}
