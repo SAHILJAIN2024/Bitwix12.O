@@ -54,11 +54,7 @@ export default function Footer() {
 
           {/* Register Now Tile */}
           <a 
-<<<<<<< HEAD
             href="https://docs.google.com/forms/d/e/1FAIpQLSdHx6cUK9siH8vI3EjODxmbkRBaLbFudmpjmatW7m7Fg4Fe3w/viewform?usp=header" 
-=======
-            href="https://forms.gle/your-registration-link" 
->>>>>>> b67c7ead1e17aa9b2a546bbc1a7231d3c38cdfbd
             target="_blank" 
             rel="noopener noreferrer" 
             className="group flex flex-col items-center justify-center w-[85px] h-[85px] rounded-xl border-2 border-white/10 bg-white/5 hover:border-indigo-400 hover:bg-indigo-400/10 hover:shadow-[0_0_20px_rgba(129,140,248,0.3)] transition-all duration-300"

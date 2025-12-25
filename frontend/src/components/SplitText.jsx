@@ -191,8 +191,4 @@ const SplitText = ({
   return renderTag();
 };
 
-<<<<<<< HEAD
 export default SplitText;
-=======
-export default SplitText;
->>>>>>> b67c7ead1e17aa9b2a546bbc1a7231d3c38cdfbd
