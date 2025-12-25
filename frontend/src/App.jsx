@@ -6,9 +6,14 @@ import Team from './components/Team'
 import Footer from './components/Footer'
 
 const images = [
+<<<<<<< HEAD
   '/slide1.jpeg', '/slide2.jpeg', '/slide3.jpeg', '/slide4.jpeg',
   '/slide5.jpeg', '/slide6.jpeg', '/slide7.jpeg', '/slide8.jpeg','/slide9.jpeg',
   '/slide10.jpeg', '/slide11.jpeg', '/slide12.jpeg'
+=======
+  '/images/slide1.jpeg', '/images/slide2.jpeg', '/images/slide3.jpeg', '/images/slide4.jpeg',
+  '/images/slide5.jpeg', '/images/slide6.jpeg', '/images/slide7.jpeg', '/images/slide8.jpeg'
+>>>>>>> b67c7ead1e17aa9b2a546bbc1a7231d3c38cdfbd
 ]
 
 function App() {

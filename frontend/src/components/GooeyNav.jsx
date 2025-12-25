@@ -169,4 +169,8 @@ const GooeyNav = ({
   );
 };
 
+<<<<<<< HEAD
 export default GooeyNav;
+=======
+export default GooeyNav;
+>>>>>>> b67c7ead1e17aa9b2a546bbc1a7231d3c38cdfbd
