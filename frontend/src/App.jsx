@@ -4,9 +4,9 @@ import VideoSection from './components/VideoSection'
 import Gallery from './components/Gallery'
 import Team from './components/Team'
 import Footer from './components/Footer'
+import Particles from './components/Particles' // Ensure this path matches your jsrepo installation
 
 const images = [
-
   '/images/slide1.jpeg', '/images/slide2.jpeg', '/images/slide3.jpeg', '/images/slide4.jpeg',
   '/images/slide5.jpeg', '/images/slide6.jpeg', '/images/slide7.jpeg', '/images/slide8.jpeg',
   '/images/slide9.jpeg', '/images/slide10.jpeg', '/images/slide11.jpeg', '/images/slide12.jpeg'
@@ -21,9 +21,27 @@ function App() {
   }
 
   return (
-    <div className="bg-[url('/bg.png')] bg-cover bg-center bg-fixed min-h-screen overflow-x-hidden text-white selection:bg-indigo-500/30">
+    <div className="relative min-h-screen overflow-x-hidden text-white selection:bg-indigo-500/30 bg-[#050505]">
+      
+      {/* --- PARTICLES BACKGROUND LAYER --- */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+     <div className="fixed inset-0 z-0 pointer-events-none">
+  <Particles
+    particleColors={['#ffffff', '#818cf8', '#ffffff']} // Added a brighter indigo
+    particleCount={400}             // Increased count for more density
+    particleSpread={15}             // Tighter spread makes them look more clustered
+    speed={0.2}                     // Slightly faster for visible movement
+    particleBaseSize={150}          // Much larger base size for visibility
+    moveParticlesOnHover={true}
+    alphaParticles={false}          // Disabled transparency for solid visibility
+    disableRotation={false}
+  />
+</div>
+      </div>
+
       <Navbar scrollTo={scrollTo} />
       
+      {/* --- MAIN CONTENT LAYER --- */}
       <main className="relative z-10">
         <section id="hero">
           <Hero />
@@ -52,7 +70,7 @@ function App() {
         </section>
         
         {/* --- TEAM SECTION --- */}
-        {/* pt-[500px] ensures the deep fade has space to play out before text starts */}
+        {/* The background here remains the Particles thanks to the 'fixed' layer above */}
         <section id="team" className="relative pt-[550px]">
           <Team />
         </section>
@@ -76,4 +94,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
