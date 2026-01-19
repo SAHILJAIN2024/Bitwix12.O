@@ -31,7 +31,7 @@ export default function VideoSection() {
         <div className="aspect-video">
           <video
             ref={videoRef}
-            src="public/images/Finalrecording.mp4"
+            src="/images/Finalrecording.mp4"
             muted
             loop
             playsInline
