@@ -120,12 +120,15 @@ svg[style*="position: absolute"] {
 
 /* Card Glassmorphism Standard */
 .glass-card {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.05); /* Slightly more opaque tint */
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  /* Production fixes: transform: translateZ(0) forces GPU rendering for blur */
+  transform: translateZ(0);
+  background-clip: padding-box;
 }
 
 .glass-card:hover {
