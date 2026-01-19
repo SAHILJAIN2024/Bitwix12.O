@@ -16,7 +16,7 @@ export default function Footer() {
         {/* LEFT MOST: Brand Title */}
         <div className="flex flex-col items-start justify-self-start">
           <SplitText
-            text="BITWIX12.O"
+            text="BITWIXT12.0"
             className="font-orbitron text-3xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400"
             delay={50}
             duration={0.8}

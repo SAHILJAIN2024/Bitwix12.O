@@ -1,0 +1,35 @@
+/* Seniors section styling */
+
+.senior-card-shadow {
+    box-shadow: 0 10px 30px -5px rgba(79, 70, 229, 0.2);
+}
+
+.senior-card-shadow:hover {
+    box-shadow: 0 20px 40px -5px rgba(79, 70, 229, 0.4);
+}
+
+/* Custom line-clamp for description if needed (though Tailwind handle it) */
+.line-clamp-4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+}
+
+/* Smooth background for the section */
+#seniors {
+    background: radial-gradient(circle at top right, rgba(79, 70, 229, 0.05), transparent 40%),
+                radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.05), transparent 40%);
+}
+
+/* Animated gradient border placeholder */
+@keyframes gradient-pulse {
+    0% { border-color: rgba(79, 70, 229, 0.1); }
+    50% { border-color: rgba(79, 70, 229, 0.3); }
+    100% { border-color: rgba(79, 70, 229, 0.1); }
+}
+
+.animate-border-pulse {
+    animation: gradient-pulse 4s infinite ease-in-out;
+}

@@ -19,7 +19,7 @@ const teams = [
   {
     title: "Anchoring Team",
     members: [
-      { name: "Ashu", role: "Anchor", badge: "Stage", img: "/team/2.jpeg" },
+      { name: "Rashi", role: "Anchor", badge: "Stage", img: "/team/2.jpeg" },
       { name: "Shruti Tiwari", role: "Anchor", badge: "Stage", img: "/team/3.jpeg" },
     ],
   },
@@ -27,7 +27,7 @@ const teams = [
     title: "Website Team",
     members: [
       { name: "Sahil Jain", role: "Developer", badge: "Tech", img: "/team/1.jpeg" },
-      { name: "Tanishq Shivhare", role: "Developer", badge: "Tech", img: "/team/2.jpeg" },
+      { name: "Tanish Shivhare", role: "Developer", badge: "Tech", img: "/team/dev1.png" },
     ],
   },
 ];
@@ -41,7 +41,7 @@ export default function Team() {
         <div className="mb-20 text-center">
           <h2 className="text-5xl font-bold font-orbitron text-white tracking-widest">THE CREW</h2>
           <p className="mt-4 text-gray-400 uppercase tracking-[0.3em] text-xs">
-            Architects of <span className="text-indigo-400">BITWIX12.O</span>
+            Architects of <span className="text-indigo-400">BITWIXT12.0</span>
           </p>
         </div>
 
@@ -54,7 +54,7 @@ export default function Team() {
 
               <div className="flex flex-wrap gap-8 justify-start">
                 {group.members.map((member) => (
-                  <div key={member.name} className="card">
+                  <div key={member.name} className="card glass-card">
                     <div className="content">
                       
                       {/* BACK SIDE (Hover) */}
@@ -65,7 +65,7 @@ export default function Team() {
                             alt="" 
                             className="w-16 h-16 rounded-full object-cover border-2 border-orange-400 mb-2" 
                           />
-                          <strong className="text-center px-2 text-sm">{member.name}</strong>
+                          <strong className="text-center px-2 text-base">{member.name}</strong>
                           <span className="text-[10px] text-orange-400 font-mono">BITWIX CREW</span>
                         </div>
                       </div>
@@ -80,13 +80,13 @@ export default function Team() {
                           <div className="circle" id="bottom" />
                         </div>
                         <div className="front-content">
-                          <small className="badge">{member.badge}</small>
+                          <small className="badge text-xs">{member.badge}</small>
                           <div className="description">
                             <div className="title">
-                              <p className="text-white"><strong>{member.name}</strong></p>
+                              <p className="text-white text-lg"><strong>{member.name}</strong></p>
                               <svg height="12px" width="12px" viewBox="0 0 256 256"><path fill="#ff9966" d="M25,27l-9,-6.75l-9,6.75v-23h18z" /></svg>
                             </div>
-                            <p className="card-footer">{member.role}</p>
+                            <p className="card-footer text-sm">{member.role}</p>
                           </div>
                         </div>
                       </div>

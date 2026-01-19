@@ -9,7 +9,24 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: #050505; /* Fallback for the background image */
+  background-color: #050505;
+  color: white;
+  overflow-x: hidden;
+}
+
+/* 2.5 Global Noise Overlay for Premium Texture */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 9999;
+  filter: contrast(120%) brightness(120%);
 }
 
 /* 3. Smooth scrolling for the scrollTo function */
@@ -101,23 +118,54 @@ svg[style*="position: absolute"] {
   height: 0;
 }
 
-/* 3. Ensure your Navigation buttons are clean */
-nav button {
-  background: transparent !important;
-  -webkit-tap-highlight-color: transparent;
-  outline: none;
+/* Card Glassmorphism Standard */
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.glass-card:hover {
+  border: 1px solid rgba(129, 140, 248, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(99, 102, 241, 0.2);
+}
+
+/* Orbitron Heading Polish */
+.font-orbitron {
+  letter-spacing: 0.15em;
+  text-rendering: optimizeLegibility;
+}
+
+/* Spotlight Effect Container */
+.spotlight-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.spotlight-glow {
+  pointer-events: none;
+  position: absolute;
+  background: radial-gradient(
+    600px circle at var(--mouse-x) var(--mouse-y),
+    rgba(99, 102, 241, 0.15),
+    transparent 40%
+  );
+  z-index: 5;
 }
 
 /* Style for the tiles inside the dome */
 .dg-tile-wrapper {
   transition: transform 0.5s cubic-bezier(0.2, 1, 0.3, 1) !important;
-  /* Adds a subtle outer glow to match your indigo theme */
-  filter: drop-shadow(0 0 10px rgba(79, 70, 229, 0.2));
+  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.6));
 }
 
-/* Enhances the tile when you hover over it */
 .dg-tile-wrapper:hover {
   filter: drop-shadow(0 0 25px rgba(79, 70, 229, 0.5)) brightness(1.1);
+  transform: scale(1.05) translateZ(50px) !important;
   z-index: 100 !important;
 }
 
@@ -125,18 +173,4 @@ nav button {
 .dg-tile-wrapper img {
   object-fit: contain !important;
   background-color: transparent !important;
-}
-
-/* Add to your index.css */
-.dg-tile-wrapper {
-  /* Adds a soft shadow so large images pop off the background */
-  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.8));
-  transition: transform 0.4s cubic-bezier(0.2, 1, 0.3, 1) !important;
-}
-
-.dg-tile-wrapper:hover {
-  /* Pulls the large image even closer to the user on hover */
-  transform: scale(1.1) translateZ(100px) !important;
-  z-index: 100 !important;
-  filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 1)) brightness(1.1);
 }
