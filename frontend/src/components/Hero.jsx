@@ -54,7 +54,6 @@ export default function Hero() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="font-orbitron mt-6 text-6xl sm:text-9xl font-black text-white tracking-widest relative"
         >
-          BITWIXT 12.O
           <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-b from-white via-indigo-200 to-indigo-500 drop-shadow-[0_0_50px_rgba(99,102,241,0.4)]">
             BITWIXT 12.0
           </span>
