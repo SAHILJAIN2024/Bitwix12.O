@@ -23,7 +23,7 @@ export default function Hero() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="font-orbitron mt-6 text-6xl sm:text-8xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-500 drop-shadow-[0_0_30px_rgba(99,102,241,0.5)] tracking-tighter"
         >
-          BITWIX 12.O
+          BITWIXT 12.O
         </motion.h1>
 
         {/* INTEGRATED TEXTTYPE COMPONENT */}
