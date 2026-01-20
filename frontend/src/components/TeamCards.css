@@ -58,7 +58,8 @@
   gap: 30px;
 }
 
-.card:hover .content {
+.card:hover .content,
+.card.flipped .content {
   transform: rotateY(180deg);
 }
 

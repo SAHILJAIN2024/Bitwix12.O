@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useCallback } from 'react';
 import { useGesture } from '@use-gesture/react';
 import './DomeGallery.css';
 
-
 const DEFAULTS = {
   maxVerticalRotationDeg: 5,
   dragSensitivity: 20,
@@ -79,7 +78,7 @@ function computeItemBaseRotation(offsetX, offsetY, sizeX, sizeY, segments) {
 }
 
 export default function DomeGallery({
-  images = DEFAULT_IMAGES,
+  images = [],
   fit = 0.5,
   fitBasis = 'auto',
   minRadius = 600,
@@ -116,6 +115,9 @@ export default function DomeGallery({
   const openStartedAtRef = useRef(0);
   const lastDragEndAt = useRef(0);
 
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  const activeDragSensitivity = isTouchDevice ? dragSensitivity * 1.5 : dragSensitivity;
+
   const scrollLockedRef = useRef(false);
   const lockScroll = useCallback(() => {
     if (scrollLockedRef.current) return;
@@ -150,6 +152,7 @@ export default function DomeGallery({
       const minDim = Math.min(w, h),
         maxDim = Math.max(w, h),
         aspect = w / h;
+      
       let basis;
       switch (fitBasis) {
         case 'min':
@@ -167,10 +170,18 @@ export default function DomeGallery({
         default:
           basis = aspect >= 1.3 ? w : minDim;
       }
+
       let radius = basis * fit;
+      
+      // MOBILE RADIUS OPTIMIZATION:
+      // On narrow screens (mobile), we want the dome to feel closer but not clip
+      if (w < 768) {
+        radius = w * 0.85; // Bring it closer on mobile
+      }
+
       const heightGuard = h * 1.35;
       radius = Math.min(radius, heightGuard);
-      radius = clamp(radius, minRadius, maxRadius);
+      radius = clamp(radius, w < 768 ? 350 : minRadius, maxRadius);
       lockedRadiusRef.current = Math.round(radius);
 
       const viewerPad = Math.max(8, Math.round(minDim * padFactor));
@@ -181,30 +192,39 @@ export default function DomeGallery({
       root.style.setProperty('--enlarge-radius', openedImageBorderRadius);
       root.style.setProperty('--image-filter', grayscale ? 'grayscale(1)' : 'none');
       applyTransform(rotationRef.current.x, rotationRef.current.y);
-
+      
+      // Update viewer frame for mobile
       const enlargedOverlay = viewerRef.current?.querySelector('.enlarge');
       if (enlargedOverlay && frameRef.current && mainRef.current) {
         const frameR = frameRef.current.getBoundingClientRect();
         const mainR = mainRef.current.getBoundingClientRect();
-
-        const hasCustomSize = openedImageWidth && openedImageHeight;
-        if (hasCustomSize) {
-          const tempDiv = document.createElement('div');
-          tempDiv.style.cssText = `position: absolute; width: ${openedImageWidth}; height: ${openedImageHeight}; visibility: hidden;`;
-          document.body.appendChild(tempDiv);
-          const tempRect = tempDiv.getBoundingClientRect();
-          document.body.removeChild(tempDiv);
-
-          const centeredLeft = frameR.left - mainR.left + (frameR.width - tempRect.width) / 2;
-          const centeredTop = frameR.top - mainR.top + (frameR.height - tempRect.height) / 2;
-
-          enlargedOverlay.style.left = `${centeredLeft}px`;
-          enlargedOverlay.style.top = `${centeredTop}px`;
+        
+        // Handle mobile sizing for opened images
+        if (w < 768) {
+          enlargedOverlay.style.width = '85vw';
+          enlargedOverlay.style.height = '60vh';
+          enlargedOverlay.style.left = `${(w - (w * 0.85)) / 2}px`;
+          enlargedOverlay.style.top = `${(h - (h * 0.6)) / 2}px`;
         } else {
-          enlargedOverlay.style.left = `${frameR.left - mainR.left}px`;
-          enlargedOverlay.style.top = `${frameR.top - mainR.top}px`;
-          enlargedOverlay.style.width = `${frameR.width}px`;
-          enlargedOverlay.style.height = `${frameR.height}px`;
+          const hasCustomSize = openedImageWidth && openedImageHeight;
+          if (hasCustomSize) {
+            const tempDiv = document.createElement('div');
+            tempDiv.style.cssText = `position: absolute; width: ${openedImageWidth}; height: ${openedImageHeight}; visibility: hidden;`;
+            document.body.appendChild(tempDiv);
+            const tempRect = tempDiv.getBoundingClientRect();
+            document.body.removeChild(tempDiv);
+
+            const centeredLeft = frameR.left - mainR.left + (frameR.width - tempRect.width) / 2;
+            const centeredTop = frameR.top - mainR.top + (frameR.height - tempRect.height) / 2;
+
+            enlargedOverlay.style.left = `${centeredLeft}px`;
+            enlargedOverlay.style.top = `${centeredTop}px`;
+          } else {
+            enlargedOverlay.style.left = `${frameR.left - mainR.left}px`;
+            enlargedOverlay.style.top = `${frameR.top - mainR.top}px`;
+            enlargedOverlay.style.width = `${frameR.width}px`;
+            enlargedOverlay.style.height = `${frameR.height}px`;
+          }
         }
       }
     });
@@ -277,23 +297,30 @@ export default function DomeGallery({
         draggingRef.current = true;
         movedRef.current = false;
         startRotRef.current = { ...rotationRef.current };
-        startPosRef.current = { x: evt.clientX, y: evt.clientY };
+        // Handle touch vs mouse coordinates
+        const clientX = evt.clientX || (evt.touches && evt.touches[0].clientX);
+        const clientY = evt.clientY || (evt.touches && evt.touches[0].clientY);
+        startPosRef.current = { x: clientX, y: clientY };
       },
       onDrag: ({ event, last, velocity = [0, 0], direction = [0, 0], movement }) => {
         if (focusedElRef.current || !draggingRef.current || !startPosRef.current) return;
         const evt = event;
-        const dxTotal = evt.clientX - startPosRef.current.x;
-        const dyTotal = evt.clientY - startPosRef.current.y;
+        const clientX = evt.clientX || (evt.touches && evt.touches[0].clientX);
+        const clientY = evt.clientY || (evt.touches && evt.touches[0].clientY);
+        
+        const dxTotal = clientX - startPosRef.current.x;
+        const dyTotal = clientY - startPosRef.current.y;
+        
         if (!movedRef.current) {
           const dist2 = dxTotal * dxTotal + dyTotal * dyTotal;
           if (dist2 > 16) movedRef.current = true;
         }
         const nextX = clamp(
-          startRotRef.current.x - dyTotal / dragSensitivity,
+          startRotRef.current.x - dyTotal / activeDragSensitivity,
           -maxVerticalRotationDeg,
           maxVerticalRotationDeg
         );
-        const nextY = wrapAngleSigned(startRotRef.current.y + dxTotal / dragSensitivity);
+        const nextY = wrapAngleSigned(startRotRef.current.y + dxTotal / activeDragSensitivity);
         if (rotationRef.current.x !== nextX || rotationRef.current.y !== nextY) {
           rotationRef.current = { x: nextX, y: nextY };
           applyTransform(nextX, nextY);
@@ -306,8 +333,8 @@ export default function DomeGallery({
           let vy = vMagY * dirY;
           if (Math.abs(vx) < 0.001 && Math.abs(vy) < 0.001 && Array.isArray(movement)) {
             const [mx, my] = movement;
-            vx = clamp((mx / dragSensitivity) * 0.02, -1.2, 1.2);
-            vy = clamp((my / dragSensitivity) * 0.02, -1.2, 1.2);
+            vx = clamp((mx / activeDragSensitivity) * 0.02, -1.2, 1.2);
+            vy = clamp((my / activeDragSensitivity) * 0.02, -1.2, 1.2);
           }
           if (Math.abs(vx) > 0.005 || Math.abs(vy) > 0.005) startInertia(vx, vy);
           if (movedRef.current) lastDragEndAt.current = performance.now();
@@ -409,6 +436,10 @@ export default function DomeGallery({
       animatingOverlay.addEventListener('transitionend', cleanup, { once: true });
     };
     scrim.addEventListener('click', close);
+    scrim.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      close();
+    });
     const onKey = e => {
       if (e.key === 'Escape') close();
     };
@@ -466,10 +497,22 @@ export default function DomeGallery({
       const overlay = document.createElement('div');
       overlay.className = 'enlarge';
       overlay.style.position = 'absolute';
-      overlay.style.left = frameR.left - mainR.left + 'px';
-      overlay.style.top = frameR.top - mainR.top + 'px';
-      overlay.style.width = frameR.width + 'px';
-      overlay.style.height = frameR.height + 'px';
+      
+      // Responsive positioning for overlay
+      const rootW = rootRef.current.offsetWidth;
+      const rootH = rootRef.current.offsetHeight;
+      if (rootW < 768) {
+        overlay.style.width = '85vw';
+        overlay.style.height = '60vh';
+        overlay.style.left = `${(rootW - (rootW * 0.85)) / 2}px`;
+        overlay.style.top = `${(rootH - (rootH * 0.6)) / 2}px`;
+      } else {
+        overlay.style.left = frameR.left - mainR.left + 'px';
+        overlay.style.top = frameR.top - mainR.top + 'px';
+        overlay.style.width = frameR.width + 'px';
+        overlay.style.height = frameR.height + 'px';
+      }
+      
       overlay.style.opacity = '0';
       overlay.style.zIndex = '30';
       overlay.style.willChange = 'transform, opacity';
@@ -480,10 +523,11 @@ export default function DomeGallery({
       img.src = rawSrc;
       overlay.appendChild(img);
       viewerRef.current.appendChild(overlay);
-      const tx0 = tileR.left - frameR.left;
-      const ty0 = tileR.top - frameR.top;
-      const sx0 = tileR.width / frameR.width;
-      const sy0 = tileR.height / frameR.height;
+      
+      const tx0 = tileR.left - (parseFloat(overlay.style.left) + mainR.left);
+      const ty0 = tileR.top - (parseFloat(overlay.style.top) + mainR.top);
+      const sx0 = tileR.width / parseFloat(overlay.style.width);
+      const sy0 = tileR.height / parseFloat(overlay.style.height);
 
       const validSx0 = isFinite(sx0) && sx0 > 0 ? sx0 : 1;
       const validSy0 = isFinite(sy0) && sy0 > 0 ? sy0 : 1;
@@ -496,57 +540,12 @@ export default function DomeGallery({
         overlay.style.transform = 'translate(0px, 0px) scale(1, 1)';
         rootRef.current?.setAttribute('data-enlarging', 'true');
       }, 16);
-
-      const wantsResize = openedImageWidth || openedImageHeight;
-      if (wantsResize) {
-        const onFirstEnd = ev => {
-          if (ev.propertyName !== 'transform') return;
-          overlay.removeEventListener('transitionend', onFirstEnd);
-          const prevTransition = overlay.style.transition;
-          overlay.style.transition = 'none';
-          const tempWidth = openedImageWidth || `${frameR.width}px`;
-          const tempHeight = openedImageHeight || `${frameR.height}px`;
-          overlay.style.width = tempWidth;
-          overlay.style.height = tempHeight;
-          const newRect = overlay.getBoundingClientRect();
-          overlay.style.width = frameR.width + 'px';
-          overlay.style.height = frameR.height + 'px';
-          void overlay.offsetWidth;
-          overlay.style.transition = `left ${enlargeTransitionMs}ms ease, top ${enlargeTransitionMs}ms ease, width ${enlargeTransitionMs}ms ease, height ${enlargeTransitionMs}ms ease`;
-          const centeredLeft = frameR.left - mainR.left + (frameR.width - newRect.width) / 2;
-          const centeredTop = frameR.top - mainR.top + (frameR.height - newRect.height) / 2;
-          requestAnimationFrame(() => {
-            overlay.style.left = `${centeredLeft}px`;
-            overlay.style.top = `${centeredTop}px`;
-            overlay.style.width = tempWidth;
-            overlay.style.height = tempHeight;
-          });
-          const cleanupSecond = () => {
-            overlay.removeEventListener('transitionend', cleanupSecond);
-            overlay.style.transition = prevTransition;
-          };
-          overlay.addEventListener('transitionend', cleanupSecond, { once: true });
-        };
-        overlay.addEventListener('transitionend', onFirstEnd);
-      }
     },
-    [enlargeTransitionMs, lockScroll, openedImageHeight, openedImageWidth, segments, unlockScroll]
+    [enlargeTransitionMs, lockScroll, segments, unlockScroll]
   );
 
   const onTileClick = useCallback(
     e => {
-      if (draggingRef.current) return;
-      if (movedRef.current) return;
-      if (performance.now() - lastDragEndAt.current < 80) return;
-      if (openingRef.current) return;
-      openItemFromElement(e.currentTarget);
-    },
-    [openItemFromElement]
-  );
-
-  const onTilePointerUp = useCallback(
-    e => {
-      if (e.pointerType !== 'touch') return;
       if (draggingRef.current) return;
       if (movedRef.current) return;
       if (performance.now() - lastDragEndAt.current < 80) return;
@@ -600,22 +599,19 @@ export default function DomeGallery({
                   tabIndex={0}
                   aria-label={it.alt || 'Open image'}
                   onClick={onTileClick}
-                  onPointerUp={onTilePointerUp}
                 >
-<img 
-  src={it.image || it.src || null} 
-  draggable={false} 
-  alt={it.alt || "Gallery Image"} 
-  style={{
-    width: '100%',
-    height: '100%',
-    /* 'contain' ensures the full image is visible without cropping */
-    objectFit: 'contain', 
-    /* Optional: prevents a background color from showing behind non-square images */
-    backgroundColor: 'transparent',
-transition: 'transform 0.5s ease'
-  }}
-/>
+                  <img 
+                    src={it.image || it.src || null} 
+                    draggable={false} 
+                    alt={it.alt || "Gallery Image"} 
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain', 
+                      backgroundColor: 'transparent',
+                      transition: 'transform 0.5s ease'
+                    }}
+                  />
                 </div>
               </div>
             ))}

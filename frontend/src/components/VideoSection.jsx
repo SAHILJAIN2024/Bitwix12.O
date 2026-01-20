@@ -28,8 +28,16 @@ export default function VideoSection() {
   }, [isInView]);
 
   return (
-    <section id="video" ref={videoSectionRef} className="py-28 px-6">
-      <div className="max-w-[95%] mx-auto text-center mb-14">
+    <motion.section 
+      id="video" 
+      ref={videoSectionRef} 
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+      className="py-24 px-0 md:px-6"
+    >
+      <div className="max-w-full md:max-w-[95%] mx-auto px-6 md:px-0 text-center mb-14">
         <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
           Experience the Vibe
         </h2>
@@ -42,7 +50,7 @@ export default function VideoSection() {
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8 }}
-        className="max-w-[95%] mx-auto rounded-[2rem] overflow-hidden bg-black/40 backdrop-blur-xl ring-1 ring-white/10 shadow-[0_0_80px_rgba(99,102,241,0.2)] relative group"
+        className="max-w-full md:max-w-[95%] mx-auto rounded-none md:rounded-[2rem] overflow-hidden bg-black/40 backdrop-blur-xl ring-0 md:ring-1 ring-white/10 shadow-[0_0_80px_rgba(99,102,241,0.2)] relative group"
       >
         <div className="relative bg-[#050505] w-full h-auto aspect-video">
           <video
@@ -99,6 +107,6 @@ export default function VideoSection() {
           </div>
         </div>
       </motion.div>
-    </section>
+    </motion.section>
   );
 }

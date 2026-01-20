@@ -177,3 +177,10 @@ svg[style*="position: absolute"] {
   object-fit: contain !important;
   background-color: transparent !important;
 }
+
+/* DomeGallery Scroll Lock */
+.dg-scroll-lock {
+  overflow: hidden !important;
+  height: 100vh !important;
+  touch-action: none !important;
+}
