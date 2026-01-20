@@ -6,22 +6,22 @@ const teams = [
   {
     title: "Finance and Management",
     members: [
-      { name: "Piyush Singh", role: "Help Desk Support", badge: "Admin", img: "/team/1.jpeg" },
-      { name: "Nemish Nagaria", role: "Logistics Head", badge: "Logistics", img: "/team/2.jpeg" },
+      { name: "Piyush Singh", role: "Help Desk Support", badge: "Admin", img: "/team/fm1.jpg" },
+      { name: "Nemish Nagaria", role: "Logistics Head", badge: "Logistics", img: "/team/fm1.JPG" },
     ],
   },
   {
     title: "Marketing Team",
     members: [
-      { name: "Priyanshu Aishwar", role: "Insta Manager", badge: "Social", img: "/team/3.jpeg" },
-      { name: "Aditi Agrawal", role: "Promotions", badge: "Marketing", img: "/team/1.jpeg" },
+      { name: "Priyanshu Aishwar", role: "Insta Manager", badge: "Social", img: "/team/mt1.jpeg" },
+      { name: "Aditi Agrawal", role: "Promotions", badge: "Marketing", img: "/team/mt2.jpg" },
     ],
   },
   {
     title: "Anchoring Team",
     members: [
-      { name: "Rashi", role: "Anchor", badge: "Stage", img: "/team/2.jpeg" },
-      { name: "Shruti Tiwari", role: "Anchor", badge: "Stage", img: "/team/3.jpeg" },
+      { name: "Rashi", role: "Anchor", badge: "Stage", img: "/team/at.jpg" },
+      { name: "Shruti Tiwari", role: "Anchor", badge: "Stage", img: "/team/at2.png" },
     ],
   },
   {
