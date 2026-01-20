@@ -27,7 +27,7 @@ main.sphere-main {
   display: grid;
   place-items: center;
   overflow: hidden;
-  touch-action: none;
+  touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none;
   background: transparent;
@@ -182,7 +182,10 @@ main.sphere-main {
   position: absolute;
   left: 0;
   right: 0;
-  height: 120px;
+  height: 60px;
+  @media (min-width: 768px) {
+    height: 120px;
+  }
   z-index: 5;
   pointer-events: none;
   background: linear-gradient(to bottom, transparent, var(--overlay-blur-color, #060010));

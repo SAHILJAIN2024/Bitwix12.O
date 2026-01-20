@@ -7,17 +7,14 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative mt-24 bg-black/60 backdrop-blur-xl border-t border-white/10 overflow-hidden">
-      {/* Change: max-w-[98%] pushes content to the edges.
-         Change: w-full ensures it takes up the whole horizontal space.
-      */}
-      <div className="w-full max-w-[98%] mx-auto px-6 py-16 grid md:grid-cols-3 gap-10 items-center">
+    <footer className="relative mt-12 md:mt-24 bg-black/60 backdrop-blur-xl border-t border-white/10 overflow-hidden">
+      <div className="w-full max-w-[98%] mx-auto px-6 py-10 md:py-16 grid grid-cols-1 md:grid-cols-3 gap-10 items-center text-center md:text-left">
         
         {/* LEFT MOST: Brand Title */}
         <div className="flex flex-col items-start justify-self-start">
           <SplitText
             text="BITWIXT12.0"
-            className="font-orbitron text-3xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400"
+            className="font-orbitron text-2xl md:text-3xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400"
             delay={50}
             duration={0.8}
             ease="power3.out"
@@ -26,7 +23,7 @@ export default function Footer() {
             to={{ opacity: 1, y: 0 }}
             threshold={0.1}
             rootMargin="-50px"
-            textAlign="left"
+            textAlign="inherit"
             onLetterAnimationComplete={handleAnimationComplete}
           />
           <p className="mt-3 text-gray-400 text-sm">
@@ -56,7 +53,7 @@ export default function Footer() {
         </div>
 
         {/* RIGHT MOST: Credits */}
-        <div className="flex flex-col items-end justify-self-end text-right text-gray-400 text-sm">
+        <div className="flex flex-col items-center md:items-end justify-center md:justify-self-end text-center md:text-right text-gray-400 text-xs md:text-sm">
           <p>© 2025 Computer Science & Engineering</p>
           <p className="mt-1">Designed & Organized by CSE Students</p>
         </div>

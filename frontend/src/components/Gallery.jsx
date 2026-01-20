@@ -16,7 +16,7 @@ export default function Gallery({ images }) {
       className="relative w-full bg-[#050505] flex flex-col items-center"
     >
       {/* 1. ANIMATED HEADING SECTION */}
-      <div className="w-full pt-32 pb-20 text-center z-30">
+      <div className="w-full pt-20 pb-10 md:pt-32 md:pb-20 text-center z-30">
         {/* Use SplitText to animate the "GALLERY" heading */}
         <SplitText
           text="GALLERY"
@@ -39,7 +39,7 @@ export default function Gallery({ images }) {
       </div>
 
       {/* 2. DOME GALLERY SECTION */}
-      <div className="relative w-full h-screen overflow-hidden">
+      <div className="relative w-full min-h-[50vh] h-[60vh] md:h-screen overflow-hidden">
         {/* Cinematic Fades */}
         <div className="absolute inset-0 z-20 pointer-events-none shadow-[inset_0_0_150px_rgba(0,0,0,1)]" />
         <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-b from-[#050505] via-transparent to-[#050505]" />

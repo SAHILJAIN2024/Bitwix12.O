@@ -116,7 +116,8 @@ export default function DomeGallery({
   const lastDragEndAt = useRef(0);
 
   const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-  const activeDragSensitivity = isTouchDevice ? dragSensitivity * 1.5 : dragSensitivity;
+  // Reduced base sensitivity from 20 to 45 (higher number = slower drag)
+  const activeDragSensitivity = isTouchDevice ? 30 : 50; 
 
   const scrollLockedRef = useRef(false);
   const lockScroll = useCallback(() => {

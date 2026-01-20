@@ -18,28 +18,32 @@ export default function Navbar({ scrollTo }) {
 
   const handleNavClick = (id, path) => {
     setIsMobileMenuOpen(false); // Close mobile menu on click
-    if (path === '/seniors') {
-      if (location.pathname !== '/seniors') {
-        navigate('/seniors');
-      }
-    } else if (isHome) {
-      if (id === 'hero' && window.scrollY < 100) return;
-      scrollTo(id);
-    } else {
-      navigate('/');
-      const scrollWhenReady = () => {
-        const element = document.getElementById(id);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        } else {
-          setTimeout(() => {
-            const secondAttempt = document.getElementById(id);
-            if (secondAttempt) secondAttempt.scrollIntoView({ behavior: 'smooth' });
-          }, 100);
+    
+    // Add a tiny delay to let the menu begin closing before scrolling
+    setTimeout(() => {
+      if (path === '/seniors') {
+        if (location.pathname !== '/seniors') {
+          navigate('/seniors');
         }
-      };
-      setTimeout(scrollWhenReady, 50);
-    }
+      } else if (isHome) {
+        if (id === 'hero' && window.scrollY < 100) return;
+        scrollTo(id);
+      } else {
+        navigate('/');
+        const scrollWhenReady = () => {
+          const element = document.getElementById(id);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          } else {
+            setTimeout(() => {
+              const secondAttempt = document.getElementById(id);
+              if (secondAttempt) secondAttempt.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }
+        };
+        setTimeout(scrollWhenReady, 100);
+      }
+    }, 10);
   };
 
   const navItems = [
