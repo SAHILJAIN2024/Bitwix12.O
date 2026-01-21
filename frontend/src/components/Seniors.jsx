@@ -65,7 +65,7 @@ export default function Seniors() {
         className="text-center mb-16"
       >
         <h2 className="text-5xl font-bold font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 mb-4">
-          OUR SENIORS
+          KNOW YOUR SENIORS
         </h2>
         <p className="text-gray-400 max-w-2xl mx-auto text-lg">
           The brilliant minds that have shaped the legacy of BITWIXT12.0. Learning, growing, and leading together.
