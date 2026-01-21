@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DomeGallery from './DomeGallery';
 import SplitText from './SplitText'; 
-import { convertDriveLink, parseCSV } from '../utils/googleDrive';
+import { convertDriveLink, parseCSV, getThumbnail } from '../utils/googleDrive';
 
-const GALLERY_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQn2YIA0glrxL8RuapMSz6LuiybAzqNA3QQjUWuxxigkLi09MGOb1bdt8Y46yhy4e6XoKoyyaperqc7/pub?gid=2047514801&single=true&output=csv";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzA4egakDsYtzuVC4HOjXUAgYCH3dy9Z1Vn-4OGaHXd9dSDlSKbAk4WHUjCXyMFSrIVmA/exec";
 
 const MOCK_IMAGES = [
-  '/images/slide1.jpeg', '/images/slide2.jpeg', '/images/slide3.jpeg', '/images/slide4.jpeg',
-  '/images/slide5.jpeg', '/images/slide6.jpeg', '/images/slide7.jpeg', '/images/slide8.jpeg',
-  '/images/slide9.jpeg', '/images/slide10.jpeg', '/images/slide11.jpeg', '/images/slide12.jpeg'
+  'https://drive.google.com/uc?id=11SRJhB3C2gxvQ0bTaSQ3VG0Ifo8n8Cbk',
+  'https://drive.google.com/uc?id=13DvddZh4tFJQlwTamQ1tJB4hgZKzK8e9'
 ];
 
 export default function Gallery() {
@@ -19,24 +18,24 @@ export default function Gallery() {
 
   useEffect(() => {
     const fetchImages = () => {
-      const cacheBucket = Math.floor(Date.now() / (30 * 60 * 1000));
-      const urlWithCacheBuster = `${GALLERY_CSV_URL}&t=${cacheBucket}`;
-
-      fetch(urlWithCacheBuster)
-        .then(res => res.text())
-        .then(text => {
-          const rows = parseCSV(text);
-          const data = rows.slice(1).map(row => convertDriveLink(row[1])).filter(src => src);
-          if (data.length > 0) {
-            setImages(data);
+      fetch(APPS_SCRIPT_URL)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data) && data.length > 0) {
+            const mappedData = data.map(img => ({
+              ...img,
+              thumbnail: getThumbnail(img.src),
+              src: convertDriveLink(img.src, img.type)
+            }));
+            setImages(mappedData);
           } else if (images.length === 0) {
-            setImages(MOCK_IMAGES);
+            setImages(MOCK_IMAGES.map(src => ({ src, type: 'image', thumbnail: getThumbnail(src) })));
           }
           setLoading(false);
         })
         .catch(err => {
           console.error("Error fetching gallery images:", err);
-          if (images.length === 0) setImages(MOCK_IMAGES);
+          if (images.length === 0) setImages(MOCK_IMAGES.map(src => ({ src, type: 'image', thumbnail: getThumbnail(src) })));
           setLoading(false);
         });
     };
@@ -47,11 +46,13 @@ export default function Gallery() {
     return () => clearInterval(interval);
   }, [images.length]);
 
-  const domeItems = images.map((img) => ({
-    image: img,
-    src: img,
-    alt: 'Archive Visual',
-  }));
+  const domeItems = images
+    .filter(item => item.type !== 'video')
+    .map((item) => ({
+      ...item,
+      image: item.thumbnail || item.src,
+      alt: 'Archive Visual',
+    }));
 
   return (
     <section

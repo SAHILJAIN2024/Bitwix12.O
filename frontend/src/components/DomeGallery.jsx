@@ -43,9 +43,9 @@ function buildItems(pool, seg) {
 
   const normalizedImages = pool.map(image => {
     if (typeof image === 'string') {
-      return { src: image, alt: '' };
+      return { src: image, alt: '', type: 'image' };
     }
-    return { src: image.src || '', alt: image.alt || '' };
+    return { src: image.src || '', alt: image.alt || '', type: image.type || 'image' };
   });
 
   const usedImages = Array.from({ length: totalSlots }, (_, i) => normalizedImages[i % normalizedImages.length]);
@@ -66,7 +66,8 @@ function buildItems(pool, seg) {
   return coords.map((c, i) => ({
     ...c,
     src: usedImages[i].src,
-    alt: usedImages[i].alt
+    alt: usedImages[i].alt,
+    type: usedImages[i].type
   }));
 }
 
@@ -388,10 +389,15 @@ export default function DomeGallery({
       const animatingOverlay = document.createElement('div');
       animatingOverlay.className = 'enlarge-closing';
       animatingOverlay.style.cssText = `position:absolute;left:${overlayRelativeToRoot.left}px;top:${overlayRelativeToRoot.top}px;width:${overlayRelativeToRoot.width}px;height:${overlayRelativeToRoot.height}px;z-index:9999;border-radius: var(--enlarge-radius, 32px);overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.35);transition:all ${enlargeTransitionMs}ms ease-out;pointer-events:none;margin:0;justify-content: center;transform:none;`;
-      const originalImg = overlay.querySelector('img');
+      const originalImg = overlay.querySelector('img, video, iframe');
       if (originalImg) {
         const img = originalImg.cloneNode();
-        img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+        img.style.cssText = 'width:100%;height:100%;object-fit:contain;';
+        if (img.tagName.toLowerCase() === 'video') {
+          img.autoplay = true;
+          img.muted = true;
+          img.loop = true;
+        }
         animatingOverlay.appendChild(img);
       }
       overlay.remove();
@@ -519,10 +525,24 @@ export default function DomeGallery({
       overlay.style.willChange = 'transform, opacity';
       overlay.style.transformOrigin = 'top left';
       overlay.style.transition = `transform ${enlargeTransitionMs}ms ease, opacity ${enlargeTransitionMs}ms ease`;
-      const rawSrc = parent.dataset.src || el.querySelector('img')?.src || '';
-      const img = document.createElement('img');
-      img.src = rawSrc;
-      overlay.appendChild(img);
+      const rawSrc = parent.dataset.src || el.querySelector('img, video')?.src || '';
+      const type = parent.dataset.type || (el.querySelector('video') ? 'video' : 'image');
+      
+      let media;
+      if (type === 'video') {
+        // Use Iframe for large videos to bypass 25MB virus scan redirect
+        const iframeSrc = rawSrc.replace('uc?id=', 'file/d/').replace('&export=download', '') + '/preview';
+        media = document.createElement('iframe');
+        media.src = iframeSrc;
+        media.style.width = '100%';
+        media.style.height = '100%';
+        media.style.border = '0';
+        media.allow = "autoplay";
+      } else {
+        media = document.createElement('img');
+        media.src = rawSrc;
+      }
+      overlay.appendChild(media);
       viewerRef.current.appendChild(overlay);
       
       const tx0 = tileR.left - (parseFloat(overlay.style.left) + mainR.left);
@@ -583,6 +603,7 @@ export default function DomeGallery({
                 key={`${it.x},${it.y},${i}`}
                 className="item"
                 data-src={it.src}
+                data-type={it.type}
                 data-offset-x={it.x}
                 data-offset-y={it.y}
                 data-size-x={it.sizeX}
@@ -601,6 +622,7 @@ export default function DomeGallery({
                   aria-label={it.alt || 'Open image'}
                   onClick={onTileClick}
                 >
+                  {/* Always use thumbnail for both images and videos in tiles to avoid ORB error */}
                   <img 
                     src={it.image || it.src || null} 
                     draggable={false} 
@@ -608,7 +630,7 @@ export default function DomeGallery({
                     style={{
                       width: '100%',
                       height: '100%',
-                      objectFit: 'contain', 
+                      objectFit: 'cover', 
                       backgroundColor: 'transparent',
                       transition: 'transform 0.5s ease'
                     }}

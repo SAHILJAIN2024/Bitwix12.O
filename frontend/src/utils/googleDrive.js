@@ -1,9 +1,25 @@
-
-export const convertDriveLink = (url) => {
+export const convertDriveLink = (url, type = 'image') => {
   if (!url) return "";
   const id = url.match(/id=([^&]+)/)?.[1] || url.match(/\/d\/([^/]+)/)?.[1];
-  // Using wsrv.nl (WordPress Image Service) as a proxy to bypass Google's direct link restrictions
-  return id ? `https://wsrv.nl/?url=https://drive.google.com/uc?id=${id}&output=webp&q=80` : url;
+  if (!id) return url;
+
+  if (type === 'video') {
+    // Reverting to standard export=download for better compatibility with redirects
+    return `https://drive.google.com/uc?id=${id}&export=download`;
+  }
+  
+  // Using wsrv.nl as a proxy to bypass Google's direct link restrictions (CORB/CORS)
+  return `https://wsrv.nl/?url=https://drive.google.com/uc?id=${id}&output=webp&q=80`;
+};
+
+export const getThumbnail = (url) => {
+  if (!url) return "";
+  const id = url.match(/id=([^&]+)/)?.[1] || url.match(/\/d\/([^/]+)/)?.[1];
+  if (!id) return url;
+  
+  // Use a more robust encoding for the thumbnail proxy
+  const driveThumb = `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+  return `https://wsrv.nl/?url=${encodeURIComponent(driveThumb)}&ext=webp`;
 };
 
 export const parseCSV = (text) => {

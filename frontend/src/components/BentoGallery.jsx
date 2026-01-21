@@ -3,19 +3,29 @@ import { motion, AnimatePresence, useSpring, useMotionValue, useTransform } from
 import { X, ArrowLeft, Maximize2, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './BentoGallery.css';
-import { convertDriveLink, parseCSV } from '../utils/googleDrive';
+import { convertDriveLink, parseCSV, getThumbnail } from '../utils/googleDrive';
 
-const GALLERY_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQn2YIA0glrxL8RuapMSz6LuiybAzqNA3QQjUWuxxigkLi09MGOb1bdt8Y46yhy4e6XoKoyyaperqc7/pub?gid=2047514801&single=true&output=csv";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzA4egakDsYtzuVC4HOjXUAgYCH3dy9Z1Vn-4OGaHXd9dSDlSKbAk4WHUjCXyMFSrIVmA/exec";
 
 const MOCK_ARCHIVE = [
-  { id: 'm1', src: '/images/slide1.jpeg', title: 'The Grand Opening', category: 'FLASHBACK', size: '2x2', description: 'The moment it all began.' },
-  { id: 'm2', src: '/images/slide2.jpeg', title: 'Neon Rhythms', category: 'DANCE', size: '1x1', description: 'Vibrant colors and synchronised moves.' },
-  { id: 'm3', src: '/images/slide3.jpeg', title: 'Static Pulse', category: 'CREW', size: '1x1', description: 'Behind the scenes with the BITWIX Crew.' },
-  { id: 'm4', src: '/images/slide4.jpeg', title: 'Shadow play', category: 'PORTRAIT', size: '2x1', description: 'Capturing the individual spirit.' },
-  { id: 'm5', src: '/images/slide5.jpeg', title: 'Vortex', category: 'EVENT', size: '1x1', description: 'A wide-angle perspective of the crowd.' },
-  { id: 'm6', src: '/images/slide6.jpeg', title: 'Chrome Night', category: 'DECOR', size: '1x2', description: 'Minimalist metallic aesthetics.' },
-  { id: 'm7', src: '/images/slide7.jpeg', title: 'Midnight Chaos', category: 'FLASHBACK', size: '2x2', description: 'The peak of the night.' },
-  { id: 'm8', src: '/images/slide15.jpeg', title: 'Silken Edge', category: 'STUDIO', size: '1x1', description: 'High-contrast studio studies.' },
+  { id: '11SRJhB3C2gxvQ0bTaSQ3VG0Ifo8n8Cbk', src: convertDriveLink('https://drive.google.com/uc?id=11SRJhB3C2gxvQ0bTaSQ3VG0Ifo8n8Cbk'), thumbnail: getThumbnail('https://drive.google.com/uc?id=11SRJhB3C2gxvQ0bTaSQ3VG0Ifo8n8Cbk'), size: '2x2', type: 'image' },
+  { id: '13DvddZh4tFJQlwTamQ1tJB4hgZKzK8e9', src: convertDriveLink('https://drive.google.com/uc?id=13DvddZh4tFJQlwTamQ1tJB4hgZKzK8e9'), thumbnail: getThumbnail('https://drive.google.com/uc?id=13DvddZh4tFJQlwTamQ1tJB4hgZKzK8e9'), size: '1x1', type: 'image' },
+  { id: '1bQuzxOv-aYMIoLhwxO6lINkhh-WvpiHL', src: convertDriveLink('https://drive.google.com/uc?id=1bQuzxOv-aYMIoLhwxO6lINkhh-WvpiHL'), thumbnail: getThumbnail('https://drive.google.com/uc?id=1bQuzxOv-aYMIoLhwxO6lINkhh-WvpiHL'), size: '1x1', type: 'image' },
+  { id: '1dpjdyWv5UBExLSxWdgRImMcgwBvKTyAq', src: convertDriveLink('https://drive.google.com/uc?id=1dpjdyWv5UBExLSxWdgRImMcgwBvKTyAq'), thumbnail: getThumbnail('https://drive.google.com/uc?id=1dpjdyWv5UBExLSxWdgRImMcgwBvKTyAq'), size: '2x1', type: 'image' },
+  { id: '1eoFhoLRpv3vdqnw1S0ZX4MnOff7FQa9u', src: convertDriveLink('https://drive.google.com/uc?id=1eoFhoLRpv3vdqnw1S0ZX4MnOff7FQa9u'), thumbnail: getThumbnail('https://drive.google.com/uc?id=1eoFhoLRpv3vdqnw1S0ZX4MnOff7FQa9u'), size: '1x1', type: 'image' },
+  { id: '1FFTzsAEuwquWbloFKb4kIoRtmfRveoju', src: convertDriveLink('https://drive.google.com/uc?id=1FFTzsAEuwquWbloFKb4kIoRtmfRveoju'), thumbnail: getThumbnail('https://drive.google.com/uc?id=1FFTzsAEuwquWbloFKb4kIoRtmfRveoju'), size: '1x2', type: 'image' },
+  { id: '1ha1ASOIccMw5aZD1S5OvLhluM0SJMAY-', src: convertDriveLink('https://drive.google.com/uc?id=1ha1ASOIccMw5aZD1S5OvLhluM0SJMAY-'), thumbnail: getThumbnail('https://drive.google.com/uc?id=1ha1ASOIccMw5aZD1S5OvLhluM0SJMAY-'), size: '2x2', type: 'image' },
+  { id: '1k7vjHZJdzTywAhO02RIpm-28_IJ-IFss', src: convertDriveLink('https://drive.google.com/uc?id=1k7vjHZJdzTywAhO02RIpm-28_IJ-IFss'), thumbnail: getThumbnail('https://drive.google.com/uc?id=1k7vjHZJdzTywAhO02RIpm-28_IJ-IFss'), size: '1x1', type: 'image' },
+  { id: '1KN_VI20BTye9vBl5xS47h8zyoOoGZkUE', src: convertDriveLink('https://drive.google.com/uc?id=1KN_VI20BTye9vBl5xS47h8zyoOoGZkUE'), thumbnail: getThumbnail('https://drive.google.com/uc?id=1KN_VI20BTye9vBl5xS47h8zyoOoGZkUE'), size: '1x1', type: 'image' },
+  { id: '1lORDsfdONw_13lfYojknLZb4FskNjZjW', src: convertDriveLink('https://drive.google.com/uc?id=1lORDsfdONw_13lfYojknLZb4FskNjZjW'), thumbnail: getThumbnail('https://drive.google.com/uc?id=1lORDsfdONw_13lfYojknLZb4FskNjZjW'), size: '2x1', type: 'image' },
+  { id: '1N_Hi29Iu0W5WVlyHTjoWol-iR2fkuQKb', src: convertDriveLink('https://drive.google.com/uc?id=1N_Hi29Iu0W5WVlyHTjoWol-iR2fkuQKb'), thumbnail: getThumbnail('https://drive.google.com/uc?id=1N_Hi29Iu0W5WVlyHTjoWol-iR2fkuQKb'), size: '1x1', type: 'image' },
+  { id: '1o81jh8eeXeMUTkjrKnLkN1ifE5jO7y2U', src: convertDriveLink('https://drive.google.com/uc?id=1o81jh8eeXeMUTkjrKnLkN1ifE5jO7y2U'), thumbnail: getThumbnail('https://drive.google.com/uc?id=1o81jh8eeXeMUTkjrKnLkN1ifE5jO7y2U'), size: '2x2', type: 'image' },
+  { id: '1PCj-y1ZNUlD5YBqKVY4goaLN16xWio-_', src: convertDriveLink('https://drive.google.com/uc?id=1PCj-y1ZNUlD5YBqKVY4goaLN16xWio-_'), thumbnail: getThumbnail('https://drive.google.com/uc?id=1PCj-y1ZNUlD5YBqKVY4goaLN16xWio-_'), size: '1x1', type: 'image' },
+  { id: '1s2tLN6b9cfZVZTxwwYwbMBVNTAAsw8Hz', src: convertDriveLink('https://drive.google.com/uc?id=1s2tLN6b9cfZVZTxwwYwbMBVNTAAsw8Hz'), thumbnail: getThumbnail('https://drive.google.com/uc?id=1s2tLN6b9cfZVZTxwwYwbMBVNTAAsw8Hz'), size: '1x1', type: 'image' },
+  { id: '1sIebDgwlE7OaQHFYS0npgbYkUf9URp8k', src: convertDriveLink('https://drive.google.com/uc?id=1sIebDgwlE7OaQHFYS0npgbYkUf9URp8k'), thumbnail: getThumbnail('https://drive.google.com/uc?id=1sIebDgwlE7OaQHFYS0npgbYkUf9URp8k'), size: '2x1', type: 'image' },
+  { id: '1V3tS_Mw9-_ex8bOu1G4a3Cv5WstJAUim', src: convertDriveLink('https://drive.google.com/uc?id=1V3tS_Mw9-_ex8bOu1G4a3Cv5WstJAUim'), thumbnail: getThumbnail('https://drive.google.com/uc?id=1V3tS_Mw9-_ex8bOu1G4a3Cv5WstJAUim'), size: '1x2', type: 'image' },
+  { id: '1V5XVAmmFgf9LsiFTmS4lFcbSHznQdQ_n', src: convertDriveLink('https://drive.google.com/uc?id=1V5XVAmmFgf9LsiFTmS4lFcbSHznQdQ_n'), thumbnail: getThumbnail('https://drive.google.com/uc?id=1V5XVAmmFgf9LsiFTmS4lFcbSHznQdQ_n'), size: '1x1', type: 'image' },
+  { id: '1v-mGYwyu1ebJb0wpRwaImZCZ_P3h7LXd', src: convertDriveLink('https://drive.google.com/uc?id=1v-mGYwyu1ebJb0wpRwaImZCZ_P3h7LXd'), thumbnail: getThumbnail('https://drive.google.com/uc?id=1v-mGYwyu1ebJb0wpRwaImZCZ_P3h7LXd'), size: '2x2', type: 'image' },
 ];
 
 function Magnetic({ children }) {
@@ -54,6 +64,7 @@ export default function BentoGallery() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [archiveImages, setArchiveImages] = useState(MOCK_ARCHIVE);
   const [loading, setLoading] = useState(true);
+  const [isTouch, setIsTouch] = useState(false);
   
   // Custom Cursor
   const cursorX = useMotionValue(-100);
@@ -67,36 +78,31 @@ export default function BentoGallery() {
   const rotateY = useTransform(cursorXSpring, [0, typeof window !== 'undefined' ? window.innerWidth : 1000], [-5, 5]);
 
   useEffect(() => {
+    // Detect touch device
+    setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0);
+
     const fetchImages = () => {
-      const cacheBucket = Math.floor(Date.now() / (30 * 60 * 1000));
-      const urlWithCacheBuster = `${GALLERY_CSV_URL}&t=${cacheBucket}`;
-
-      fetch(urlWithCacheBuster)
-        .then(res => res.text())
-        .then(text => {
-          // Basic check if it's a CSV or some error page
-          if (!text.includes(',') || text.includes('<!DOCTYPE html>')) {
-            throw new Error("Invalid CSV data");
-          }
-
-          const rows = parseCSV(text);
-          // Header: Timestamp, Image, Title, Category, Description, Size
-          const data = rows.slice(1).map((row, idx) => ({
-            id: idx,
-            src: convertDriveLink(row[1]),
-            title: row[2] || 'Archive Visual',
-            category: row[3] || 'EVENT',
-            description: row[4] || 'Exploring the threshold of visual perception.',
-            size: row[5] || '1x1'
-          })).filter(img => img.src);
-          
-          if (data.length > 0) {
-            setArchiveImages(data);
+      fetch(APPS_SCRIPT_URL)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data) && data.length > 0) {
+            const sizes = ['1x1', '2x2', '1x1', '2x1', '1x1', '1x2'];
+            const mappedData = data.map((img, idx) => ({
+              ...img,
+              thumbnail: getThumbnail(img.src), // Reliable grid preview
+              src: convertDriveLink(img.src, img.type), // Used for detail view
+              size: sizes[idx % sizes.length]
+            }));
+            setArchiveImages(mappedData);
+          } else {
+            console.warn("No data returned from script, using fallbacks");
+            setArchiveImages(MOCK_ARCHIVE);
           }
           setLoading(false);
         })
         .catch(err => {
           console.warn("External gallery data not available, using fallbacks:", err);
+          setArchiveImages(MOCK_ARCHIVE);
           setLoading(false);
         });
     };
@@ -118,27 +124,31 @@ export default function BentoGallery() {
 
   return (
     <div className="bento-gallery-page min-h-screen bg-[#020202] text-white selection:bg-[#10b981]/30">
-      {/* CUSTOM CURSOR */}
-      <motion.div 
-        className="custom-cursor hidden md:block"
-        style={{
-          x: cursorXSpring,
-          y: cursorYSpring,
-        }}
-      />
+      {/* CUSTOM CURSOR - Only on Desktop */}
+      {!isTouch && (
+        <motion.div 
+          className="custom-cursor hidden md:block"
+          style={{
+            x: cursorXSpring,
+            y: cursorYSpring,
+          }}
+        />
+      )}
 
       {/* NOISE OVERLAY */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-[9999] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
-
       {/* HEADER */}
       <header className="fixed top-0 left-0 w-full z-50 px-8 py-6 flex justify-between items-center mix-blend-difference pointer-events-none">
         <div className="flex items-center gap-4 pointer-events-auto">
           <Magnetic>
             <button 
               onClick={() => navigate('/')}
-              className="p-3 rounded-full bg-white/5 backdrop-blur-3xl border border-white/10 hover:bg-[#10b981]/20 hover:border-[#10b981]/40 transition-all group"
+              className="p-3 pr-6 rounded-full bg-white/5 backdrop-blur-3xl border border-white/10 hover:bg-[#10b981]/20 hover:border-[#10b981]/40 transition-all group active:scale-90 flex items-center gap-3"
             >
-              <ArrowLeft className="w-5 h-5 text-white group-hover:text-[#10b981]" />
+              <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#10b981]/20 transition-colors">
+                <ArrowLeft className="w-4 h-4 text-white group-hover:text-[#10b981]" />
+              </div>
+              <span className="font-orbitron font-bold text-[10px] tracking-[0.2em] text-white">Back</span>
             </button>
           </Magnetic>
           <span className="font-orbitron font-black tracking-tighter text-2xl uppercase">Gallery</span>
@@ -189,22 +199,19 @@ export default function BentoGallery() {
                 delay: idx * 0.05 
               }}
               onClick={() => setSelectedImage(item)}
-              className={`bento-item rounded-[30px] overflow-hidden relative group cursor-pointer ${item.size === '2x2' ? 'col-span-2 row-span-2' : item.size === '2x1' ? 'col-span-2' : item.size === '1x2' ? 'row-span-2' : ''}`}
+              className={`bento-item rounded-[30px] overflow-hidden relative group cursor-pointer bg-white/5 ${item.size === '2x2' ? 'col-span-2 row-span-2' : item.size === '2x1' ? 'col-span-2' : item.size === '1x2' ? 'row-span-2' : ''}`}
             >
+              {/* ALWAYS render thumbnail in the grid for both images and videos */}
               <img 
-                src={item.src} 
-                alt={item.title}
+                src={item.thumbnail} 
+                alt="Archive Visual"
                 className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out opacity-60 group-hover:opacity-100"
               />
               
               {/* HOVER OVERLAY */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <div className="absolute bottom-8 left-8 flex flex-col items-start translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                  <span className="font-mono text-[10px] tracking-[0.3em] text-[#10b981] mb-2">{item.category}</span>
-                  <h3 className="text-2xl font-black uppercase tracking-tighter line-tight">{item.title}</h3>
-                </div>
-                <div className="absolute top-8 right-8 p-3 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-50 group-hover:scale-100">
-                  <Maximize2 className="w-4 h-4 text-white" />
+              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+                <div className="p-4 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 transform scale-50 group-hover:scale-100 transition-all duration-500">
+                  <Maximize2 className="w-6 h-6 text-white" />
                 </div>
               </div>
             </motion.div>
@@ -221,49 +228,42 @@ export default function BentoGallery() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedImage(null)}
-              className="absolute inset-0 bg-[#020202]/95 backdrop-blur-3xl"
+              className="absolute inset-0 bg-[#020202]/98 backdrop-blur-3xl"
             />
             
             <motion.div 
               layoutId={`image-${selectedImage.id}`}
-              className="relative w-full max-w-6xl aspect-square md:aspect-[16/9] bg-[#0a0a0a] rounded-[40px] overflow-hidden border border-white/10 flex flex-col md:flex-row shadow-2xl"
+              className="relative w-full max-w-7xl h-full flex items-center justify-center z-10"
+              onClick={() => setSelectedImage(null)}
             >
-              {/* IMAGE SIDE */}
-              <div className="md:w-3/4 relative h-1/2 md:h-full bg-black flex items-center justify-center">
-                <img 
-                  src={selectedImage.src} 
-                  alt={selectedImage.title}
-                  className="w-full h-full object-cover"
-                />
+              <div className="relative w-full h-[80vh] flex items-center justify-center p-4 md:p-8">
+                {selectedImage.type === 'video' ? (
+                  <iframe 
+                    src={selectedImage.src.replace('uc?id=', 'file/d/').replace('&export=download', '') + '/preview'}
+                    className="w-full h-full max-w-5xl border-0 shadow-2xl rounded-lg bg-black"
+                    allow="autoplay"
+                    title="Video Preview"
+                  />
+                ) : (
+                  <motion.img 
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    src={selectedImage.src} 
+                    alt="Archive Visual"
+                    className="max-w-full max-h-full object-contain shadow-2xl rounded-lg"
+                  />
+                )}
                 
-                <div className="absolute top-8 right-8 z-20">
+                <div className="absolute top-0 right-0 md:top-8 md:right-8 z-20">
                   <Magnetic>
                     <button 
-                      onClick={() => setSelectedImage(null)}
-                      className="p-4 rounded-full bg-black/50 backdrop-blur-xl border border-white/10 text-white hover:bg-[#10b981]/20 transition-all"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedImage(null);
+                      }}
+                      className="p-5 md:p-4 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-white hover:bg-white/20 transition-all active:scale-90"
                     >
-                      <X className="w-6 h-6" />
-                    </button>
-                  </Magnetic>
-                </div>
-              </div>
-
-              {/* DETAILS SIDE */}
-              <div className="md:w-1/4 p-8 md:p-12 flex flex-col bg-[#0a0a0a] border-l border-white/5 overflow-y-auto custom-scrollbar">
-                <span className="font-mono text-[10px] tracking-[0.4em] text-[#10b981] mb-6 uppercase">Perspective / {selectedImage.category}</span>
-                <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter leading-none mb-8">{selectedImage.title}</h2>
-                
-                <div className="h-[1px] w-full bg-white/10 mb-8 shrink-0" />
-                
-                <p className="text-gray-400 text-sm leading-relaxed mb-12 italic">
-                  "{selectedImage.description}"
-                </p>
-
-                <div className="mt-auto space-y-4">
-                  <Magnetic>
-                    <button className="w-full py-4 rounded-full bg-white text-black font-black uppercase tracking-widest text-[10px] hover:bg-[#10b981] transition-colors flex items-center justify-center gap-4 group">
-                      <span>View High Res</span>
-                      <ExternalLink className="w-4 h-4 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+                      <X className="w-8 h-8 md:w-6 md:h-6" />
                     </button>
                   </Magnetic>
                 </div>
@@ -272,7 +272,6 @@ export default function BentoGallery() {
           </div>
         )}
       </AnimatePresence>
-
     </div>
   );
 }
