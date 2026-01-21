@@ -27,8 +27,8 @@ const teams = [
   {
     title: "Developers",
     members: [
-      { name: "Sahil Jain", role: "Developer", badge: "Tech", img: "/team/1.jpeg" },
       { name: "Tanish Shivhare", role: "Developer", badge: "Tech", img: "/team/dev1.png" },
+      { name: "Sahil Jain", role: "Developer", badge: "Tech", img: "/team/dev2.jpeg" },
     ],
   },
 ];

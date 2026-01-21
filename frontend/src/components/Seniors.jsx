@@ -3,57 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, User, Quote } from 'lucide-react';
 import './Seniors.css';
+import { convertDriveLink, parseCSV } from '../utils/googleDrive';
 
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQn2YIA0glrxL8RuapMSz6LuiybAzqNA3QQjUWuxxigkLi09MGOb1bdt8Y46yhy4e6XoKoyyaperqc7/pub?gid=91126344&single=true&output=csv";
-
-const convertDriveLink = (url) => {
-  if (!url) return "";
-  const id = url.match(/id=([^&]+)/)?.[1] || url.match(/\/d\/([^/]+)/)?.[1];
-  return id ? `https://wsrv.nl/?url=https://drive.google.com/uc?id=${id}&output=webp&q=80` : url;
-};
-
-const parseCSV = (text) => {
-  const rows = [];
-  let currentRow = [];
-  let currentToken = "";
-  let inQuotes = false;
-
-  for (let i = 0; i < text.length; i++) {
-    const char = text[i];
-    const nextChar = text[i + 1];
-
-    if (inQuotes) {
-      if (char === '"' && nextChar === '"') {
-        currentToken += '"';
-        i++;
-      } else if (char === '"') {
-        inQuotes = false;
-      } else {
-        currentToken += char;
-      }
-    } else {
-      if (char === '"') {
-        inQuotes = true;
-      } else if (char === ',') {
-        currentRow.push(currentToken.trim());
-        currentToken = "";
-      } else if (char === '\n' || (char === '\r' && nextChar === '\n')) {
-        currentRow.push(currentToken.trim());
-        rows.push(currentRow);
-        currentRow = [];
-        currentToken = "";
-        if (char === '\r') i++;
-      } else {
-        currentToken += char;
-      }
-    }
-  }
-  if (currentToken || currentRow.length > 0) {
-    currentRow.push(currentToken.trim());
-    rows.push(currentRow);
-  }
-  return rows;
-};
 
 const CREW_MEMBERS = [
   "Piyush Singh", "Nemish Nagaria", "Priyanshu Aishwar", 
@@ -67,26 +19,33 @@ export default function Seniors() {
   const [selectedSenior, setSelectedSenior] = useState(null);
 
   useEffect(() => {
-    const cacheBucket = Math.floor(Date.now() / (30 * 60 * 1000));
-    const urlWithCacheBuster = `${CSV_URL}&t=${cacheBucket}`;
+    const fetchData = () => {
+      const cacheBucket = Math.floor(Date.now() / (30 * 60 * 1000));
+      const urlWithCacheBuster = `${CSV_URL}&t=${cacheBucket}`;
 
-    fetch(urlWithCacheBuster)
-      .then(res => res.text())
-      .then(text => {
-        const rows = parseCSV(text);
-        const data = rows.slice(1).map(row => ({
-          timestamp: row[0],
-          name: row[1],
-          image: convertDriveLink(row[2]),
-          description: row[3]
-        })).filter(s => s.name);
-        setSeniors(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Error fetching seniors data:", err);
-        setLoading(false);
-      });
+      fetch(urlWithCacheBuster)
+        .then(res => res.text())
+        .then(text => {
+          const rows = parseCSV(text);
+          const data = rows.slice(1).map(row => ({
+            timestamp: row[0],
+            name: row[1],
+            image: convertDriveLink(row[2]),
+            description: row[3]
+          })).filter(s => s.name);
+          setSeniors(data);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error("Error fetching seniors data:", err);
+          setLoading(false);
+        });
+    };
+
+    fetchData();
+    // Refresh every 5 minutes
+    const interval = setInterval(fetchData, 5 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   if (loading) {

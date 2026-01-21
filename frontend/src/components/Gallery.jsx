@@ -1,10 +1,53 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DomeGallery from './DomeGallery';
-import SplitText from './SplitText'; // Adjust path if needed
+import SplitText from './SplitText'; 
+import { convertDriveLink, parseCSV } from '../utils/googleDrive';
 
-export default function Gallery({ images }) {
-  const validImages = images?.filter(img => img && img.trim() !== '') || [];
-  const domeItems = validImages.map((img) => ({
+const GALLERY_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQn2YIA0glrxL8RuapMSz6LuiybAzqNA3QQjUWuxxigkLi09MGOb1bdt8Y46yhy4e6XoKoyyaperqc7/pub?gid=2047514801&single=true&output=csv";
+
+const MOCK_IMAGES = [
+  '/images/slide1.jpeg', '/images/slide2.jpeg', '/images/slide3.jpeg', '/images/slide4.jpeg',
+  '/images/slide5.jpeg', '/images/slide6.jpeg', '/images/slide7.jpeg', '/images/slide8.jpeg',
+  '/images/slide9.jpeg', '/images/slide10.jpeg', '/images/slide11.jpeg', '/images/slide12.jpeg'
+];
+
+export default function Gallery() {
+  const navigate = useNavigate();
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchImages = () => {
+      const cacheBucket = Math.floor(Date.now() / (30 * 60 * 1000));
+      const urlWithCacheBuster = `${GALLERY_CSV_URL}&t=${cacheBucket}`;
+
+      fetch(urlWithCacheBuster)
+        .then(res => res.text())
+        .then(text => {
+          const rows = parseCSV(text);
+          const data = rows.slice(1).map(row => convertDriveLink(row[1])).filter(src => src);
+          if (data.length > 0) {
+            setImages(data);
+          } else if (images.length === 0) {
+            setImages(MOCK_IMAGES);
+          }
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error("Error fetching gallery images:", err);
+          if (images.length === 0) setImages(MOCK_IMAGES);
+          setLoading(false);
+        });
+    };
+
+    fetchImages();
+    // Refresh every 5 minutes
+    const interval = setInterval(fetchImages, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [images.length]);
+
+  const domeItems = images.map((img) => ({
     image: img,
     src: img,
     alt: 'Archive Visual',
@@ -64,6 +107,32 @@ export default function Gallery({ images }) {
               UPLOADING ASSETS...
             </div>
           )}
+        </div>
+
+        {/* 3. EXPLORE MORE CALL-TO-ACTION */}
+        <div className="absolute bottom-10 left-0 w-full flex justify-center z-30 px-6">
+          <button 
+            onClick={() => navigate('/gallery-archive')}
+            className="group relative px-8 py-4 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full hover:bg-white/10 transition-all duration-500 overflow-hidden"
+          >
+            {/* Animated background glow */}
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            
+            <div className="relative flex items-center gap-4">
+              <span className="font-orbitron text-xs md:text-sm font-bold tracking-[0.3em] text-white uppercase">
+                Explore Full Archive
+              </span>
+              <div className="w-8 h-[1px] bg-indigo-400 group-hover:w-12 transition-all duration-500" />
+              <svg 
+                className="w-4 h-4 text-indigo-400 group-hover:translate-x-2 transition-transform duration-500" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </div>
+          </button>
         </div>
       </div>
     </section>

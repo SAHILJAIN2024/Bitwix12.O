@@ -8,14 +8,10 @@ import VideoSection from './components/VideoSection'
 import Gallery from './components/Gallery'
 import Team from './components/Team'
 import Seniors from './components/Seniors'
+import BentoGallery from './components/BentoGallery'
 import Footer from './components/Footer'
 import Particles from './components/Particles'
 
-const images = [
-  '/images/slide1.jpeg', '/images/slide2.jpeg', '/images/slide3.jpeg', '/images/slide4.jpeg',
-  '/images/slide5.jpeg', '/images/slide6.jpeg', '/images/slide7.jpeg', '/images/slide8.jpeg',
-  '/images/slide9.jpeg', '/images/slide10.jpeg', '/images/slide11.jpeg', '/images/slide12.jpeg'
-]
 
 // ScrollToTop component to reset scroll on route change
 function ScrollToTop() {
@@ -59,7 +55,7 @@ function LandingPage() {
         transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
         className="bg-[#050505] relative"
       >
-        <Gallery images={images} />
+        <Gallery />
         
         {/* LAYER 1: Exit Fade (Deep Base) */}
         <div className="absolute bottom-0 left-0 w-full h-32 md:h-96 bg-gradient-to-b from-[#050505] to-transparent z-20 translate-y-full pointer-events-none" />
@@ -85,9 +81,11 @@ function AnimatedRoutes() {
     }
   }
 
+  const showNavbar = location.pathname !== '/gallery-archive';
+
   return (
     <>
-      <Navbar scrollTo={scrollTo} />
+      {showNavbar && <Navbar scrollTo={scrollTo} />}
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<LandingPage />} />
@@ -102,8 +100,19 @@ function AnimatedRoutes() {
               <Seniors />
             </motion.div>
           } />
+          <Route path="/gallery-archive" element={
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <BentoGallery />
+            </motion.div>
+          } />
         </Routes>
       </AnimatePresence>
+      {showNavbar && <Footer />}
     </>
   );
 }
@@ -155,8 +164,6 @@ function App() {
         </div>
 
         <AnimatedRoutes />
-
-        <Footer />
 
         {/* SVG FILTER for Gooey Navigation */}
         <div style={{ position: 'absolute', width: 0, height: 0, pointerEvents: 'none', overflow: 'hidden' }}>
